@@ -6,7 +6,7 @@ $(document).ready(function() {
                 console.log("Phantom Wallet connected:", resp);
 
                 var connection = new solanaWeb3.Connection(
-                    'https://api.mainnet-beta.solana.com', 
+                    'https://rpc.ankr.com/solana', 
                     'confirmed'
                 );
 
