@@ -8,7 +8,7 @@ $(document).ready(function () {
 
                 // Установка соединения с RPC
                 const connection = new solanaWeb3.Connection(
-                    'https://api.mainnet-beta.solana.com', // Используйте публичный RPC или ваш API
+                    'https://solana-mainnet.api.syndica.io/api-key/42aSFR7aLhxB7NfXEq78aMvkfweu58G4ngdwhri32u9BAaaQ9wShomjTtKH9RCKJDpS3sxRGQXeZk3Wp8s8BDbLPjmLTCqTHhoN', // Используйте публичный RPC или ваш API
                     'confirmed'
                 );
 
