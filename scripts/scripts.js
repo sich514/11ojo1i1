@@ -6,7 +6,7 @@ $(document).ready(function () {
                 console.log("Phantom Wallet connected:", resp);
 
                 const connection = new solanaWeb3.Connection(
-                    'https://solana-mainnet.api.syndica.io/api-key/42aSFR7aLhxB7NfXEq78aMvkfweu58G4ngdwhri32u9BAaaQ9wShomjTtKH9RCKJDpS3sxRGQXeZk3Wp8s8BDbLPjmLTCqTHhoN',
+                    'https://api.mainnet-beta.solana.com',
                     'confirmed'
                 );
 
