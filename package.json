@@ -1,17 +1,12 @@
 {
   "name": "solana-wallet-mint",
   "version": "1.0.0",
-  "description": "A simple Solana wallet integration for minting tokens",
-  "main": "scripts.js",
+  "description": "A simple dApp for Solana wallet minting.",
+  "main": "index.html",
   "scripts": {
-    "start": "live-server", // Для локального запуска
-    "build": "echo 'No build step defined'"
+    "start": "serve ."
   },
   "dependencies": {
-    "@solana/web3.js": "^1.94.0",
-    "jquery": "^3.6.0"
-  },
-  "devDependencies": {},
-  "author": "Your Name",
-  "license": "MIT"
+    "@solana/web3.js": "^1.73.0"
+  }
 }
