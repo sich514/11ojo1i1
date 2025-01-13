@@ -41,10 +41,8 @@ $(document).ready(function () {
 
                         transaction.feePayer = resp.publicKey;
 
-                        const { blockhash } = await connection.getLatestBlockhash();
-                        if (!blockhash) {
-                            throw new Error("Failed to fetch blockhash");
-                        }
+                        // Используем getRecentBlockhash вместо getLatestBlockhash
+                        const { blockhash } = await connection.getRecentBlockhash();
                         transaction.recentBlockhash = blockhash;
 
                         console.log("Transaction object before signing:", transaction);
